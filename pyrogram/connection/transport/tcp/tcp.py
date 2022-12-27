@@ -20,6 +20,7 @@ import asyncio
 import ipaddress
 import logging
 import socket
+from concurrent.futures import ThreadPoolExecutor
 
 import socks
 
@@ -39,6 +40,8 @@ class TCP:
         self.send_task = None
 
         self.loop = asyncio.get_event_loop()
+
+        self.proxy = proxy
 
         if proxy:
             hostname = proxy.get("hostname")
@@ -73,10 +76,14 @@ class TCP:
             self.socket.setblocking(False)
 
     async def connect(self, address: tuple):
-        try:
-            await asyncio.wait_for(asyncio.get_event_loop().sock_connect(self.socket, address), TCP.TIMEOUT)
-        except asyncio.TimeoutError:  # Re-raise as TimeoutError. asyncio.TimeoutError is deprecated in 3.11
-            raise TimeoutError("Connection timed out")
+        if self.proxy:
+            with ThreadPoolExecutor(1) as executor:
+                await self.loop.run_in_executor(executor, self.socket.connect, address)
+        else:
+            try:
+                await asyncio.wait_for(asyncio.get_event_loop().sock_connect(self.socket, address), TCP.TIMEOUT)
+            except asyncio.TimeoutError:  # Re-raise as TimeoutError. asyncio.TimeoutError is deprecated in 3.11
+                raise TimeoutError("Connection timed out")
 
         self.reader, self.writer = await asyncio.open_connection(sock=self.socket)
         self.send_task = asyncio.create_task(self.send_worker())
