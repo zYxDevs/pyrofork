@@ -5,7 +5,7 @@ import string
 with open("pyrogram/__init__.py", "r") as f:
     pyro_version = re.findall(r"__version__ = \"(.+)\"", f.read())[0]
     date = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    version = f"{pyro_version}.dev{date}"
+    version = f"{pyro_version}a1.dev{date}"
 
 with open("pyrogram/__init__.py", "r") as f:
     lines = f.readlines()
