@@ -16,29 +16,39 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Union
+
 import pyrogram
+from pyrogram import raw
+from pyrogram import types
 
 
-class StopTransmission:
-    @staticmethod
-    def stop_transmission():
-        """Stop downloading or uploading a file.
+class GetStickerSet:
+    async def get_sticker_set(
+        self: "pyrogram.Client",
+        set_short_name: str
+    ) -> "types.StickerSet":
+        """Get info about a stickerset.
 
-        This method must be called inside a progress callback function in order to stop the transmission at the
-        desired time. The progress callback is called every time a file chunk is uploaded/downloaded.
+        .. include:: /_includes/usable-by/users-bots.rst
+
+        Parameters:
+            set_short_name (``str``):
+               Stickerset shortname.
+
+        Returns:
+            :obj:`~pyrogram.types.StickerSet`: On success, the StickerSet information is returned.
 
         Example:
             .. code-block:: python
 
-                # Stop transmission once the upload progress reaches 50%
-                async def progress(current, total, client):
-                    if (current * 100 / total) > 50:
-                        client.stop_transmission()
-
-                async with app:
-                    await app.send_document(
-                        "me", "file.zip",
-                        progress=progress,
-                        progress_args=(app,))
+                await app.get_sticker_set("mypack1")
         """
-        raise pyrogram.StopTransmission
+        r = await self.invoke(
+            raw.functions.messages.GetStickerSet(
+                stickerset=raw.types.InputStickerSetShortName(short_name=set_short_name),
+                hash=0
+            )
+        )
+
+        return types.StickerSet._parse(r.set)

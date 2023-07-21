@@ -138,6 +138,7 @@ def pyrogram_api():
             start
             stop
             run
+            run_sync
             restart
             add_handler
             remove_handler
@@ -255,6 +256,12 @@ def pyrogram_api():
             get_common_chats
             get_default_emoji_statuses
             set_emoji_status
+        """,
+        stickers="""
+        Stickers
+            add_sticker_to_set
+            create_sticker_set
+            get_sticker_set
         """,
         invite_links="""
         Invite Links
@@ -411,6 +418,7 @@ def pyrogram_api():
             Location
             Venue
             Sticker
+            StickerSet
             Game
             WebPage
             Poll
