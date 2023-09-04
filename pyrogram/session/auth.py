@@ -44,6 +44,7 @@ class Auth:
         self.ipv6 = client.ipv6
         self.alt_port = client.alt_port
         self.proxy = client.proxy
+        self.use_pysocks = client.use_pysocks
 
         self.connection = None
 
@@ -78,7 +79,7 @@ class Auth:
         # The server may close the connection at any time, causing the auth key creation to fail.
         # If that happens, just try again up to MAX_RETRIES times.
         while True:
-            self.connection = Connection(self.dc_id, self.test_mode, self.ipv6, self.alt_port, self.proxy)
+            self.connection = Connection(self.dc_id, self.test_mode, self.ipv6, self.alt_port, self.proxy, self.use_pysocks)
 
             try:
                 log.info("Start creating a new auth key on DC%s", self.dc_id)

@@ -30,12 +30,13 @@ log = logging.getLogger(__name__)
 class Connection:
     MAX_CONNECTION_ATTEMPTS = 3
 
-    def __init__(self, dc_id: int, test_mode: bool, ipv6: bool, alt_port: bool, proxy: dict, media: bool = False):
+    def __init__(self, dc_id: int, test_mode: bool, ipv6: bool, alt_port: bool, proxy: dict, use_pysocks: bool, media: bool = False):
         self.dc_id = dc_id
         self.test_mode = test_mode
         self.ipv6 = ipv6
         self.alt_port = alt_port
         self.proxy = proxy
+        self.use_pysocks = use_pysocks
         self.media = media
 
         self.address = DataCenter(dc_id, test_mode, ipv6, alt_port, media)
@@ -43,7 +44,7 @@ class Connection:
 
     async def connect(self):
         for i in range(Connection.MAX_CONNECTION_ATTEMPTS):
-            self.protocol = TCPAbridged(self.ipv6, self.proxy)
+            self.protocol = TCPAbridged(self.ipv6, self.proxy, self.use_pysocks)
 
             try:
                 log.info("Connecting...")

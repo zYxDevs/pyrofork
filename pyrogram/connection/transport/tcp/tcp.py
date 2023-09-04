@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 class TCP:
     TIMEOUT = 10
 
-    def __init__(self, ipv6: bool, proxy: dict):
+    def __init__(self, ipv6: bool, proxy: dict, use_pysocks: bool):
         self.socket = None
 
         self.reader = None
@@ -40,6 +40,7 @@ class TCP:
         self.loop = asyncio.get_event_loop()
 
         self.proxy = proxy
+        self.use_pysocks = use_pysocks
 
         if proxy:
             hostname = proxy.get("hostname")
@@ -65,6 +66,11 @@ class TCP:
             self.socket.settimeout(TCP.TIMEOUT)
 
             log.info("Using proxy %s", hostname)
+        elif use_pysocks:
+            self.socket = socks.socksocket(
+                socket.AF_INET6 if ipv6
+                else socket.AF_INET
+            )
         else:
             self.socket = socket.socket(
                 socket.AF_INET6 if ipv6

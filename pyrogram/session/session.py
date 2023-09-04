@@ -108,6 +108,7 @@ class Session:
                 self.client.ipv6,
                 self.client.alt_port,
                 self.client.proxy,
+                self.client.use_pysocks,
                 self.is_media
             )
 

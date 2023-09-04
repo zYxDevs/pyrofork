@@ -30,8 +30,8 @@ log = logging.getLogger(__name__)
 class TCPIntermediateO(TCP):
     RESERVED = (b"HEAD", b"POST", b"GET ", b"OPTI", b"\xee" * 4)
 
-    def __init__(self, ipv6: bool, proxy: dict):
-        super().__init__(ipv6, proxy)
+    def __init__(self, ipv6: bool, proxy: dict, use_pysocks: bool):
+        super().__init__(ipv6, proxy, use_pysocks)
 
         self.encrypt = None
         self.decrypt = None
